@@ -9,12 +9,12 @@ import compression from 'compression';
 import { Server as ServerIO } from 'socket.io';
 import { createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
-import aplicationRoutes from './routes';
+import aplicationRoutes from '@root/routes';
 import 'express-async-error';
-import { config } from './config';
-import { CustumError, IErrorResponse } from './shared/globals/helpers/error-handler';
+import { CustumError, IErrorResponse } from '@global/helpers/error-handler';
 import Logger from 'bunyan';
- 
+import { config }  from '@root/config';
+
 const SERVER_PORT=5000;
 const log: Logger = config.creatLogger('setupServer');
 
@@ -51,7 +51,7 @@ export class ChatServer {
             credentials: true,
             optionsSuccessStatus: 200,
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTHINS']
-        }));    
+        }));
     }
 
     private standartMiddleware(app: Application): void {
@@ -59,11 +59,11 @@ export class ChatServer {
         app.use(json({limit: '50mb'}));
         app.use(urlencoded({extended: true, limit: '50mb'}));
     }
-    
+
     private routesMiddleware(app: Application): void {
         aplicationRoutes(app);
     }
-    
+
     private globalErrorHandler(app: Application): void {
         app.all('*', (req: Request, res: Response) => {
             res.status(HTTP_STATUS.NOT_FOUND).json({message: `${req.originalUrl} not found`});
@@ -78,7 +78,7 @@ export class ChatServer {
         });
 
     }
-    
+
     private async startServer(app: Application): Promise<void> {
         try {
            const httpServer: HttpServer = new HttpServer(app);
@@ -91,7 +91,7 @@ export class ChatServer {
             log.error(error);
         }
     }
-    
+
     private async createSocketIO(httpServer: HttpServer): Promise<ServerIO> {
         const io: ServerIO = new ServerIO(httpServer, {
             cors: {
@@ -115,6 +115,6 @@ export class ChatServer {
     }
 
     private socketIOConnection(io: ServerIO): void {
-        
+        log.info('socketIOConnection');
     }
 }

@@ -24,7 +24,7 @@ class Config{
 
     public creatLogger(name: string): bunyan {
         return bunyan.createLogger({name, level: 'debug'});
-    } 
+    }
 
     public validateConfig():void {
         for(const [key, value] of Object.entries(this)){
@@ -35,4 +35,4 @@ class Config{
     }
 };
 
-export const config: Config = new Config();
+export  const config: Config = new Config();
