@@ -1,5 +1,6 @@
+import HTTP_STATUS from 'http-status-codes';
 import {ObjectId} from 'mongodb';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { joiValidation } from '@global/decorators/joi-validation.decorator';
 import { signupSchema } from '@auth/schemes/signup';
 import { IAuthDocument, ISignUpData } from '@auth/interfaces/auth.interface';
@@ -13,7 +14,7 @@ import { uploads } from '@global/helpers/cloudinary-upload';
 export class SignUp {
 
   @joiValidation(signupSchema)
-  public async create(req: Request, res: Response): Promise<void> {
+  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { email, password, username, avatarColor, avatarImage } = req.body;
     const checkIfUserExist: IAuthDocument = await authService.getUserByUsernameOrEmail(username, email);
     if(checkIfUserExist) {
@@ -35,10 +36,10 @@ export class SignUp {
     const result: UploadApiResponse = await uploads(avatarImage, `${userObjectId}`, true, true) as UploadApiResponse;
 
     if(!result?.public_id) {
-      throw new BadRequestError('File upload: Error occured. Try again.');
+      return next(new BadRequestError('File upload: Error occured. Try again.'));
     }
 
-
+    res.status(HTTP_STATUS.CREATED).json({message: 'User Created', authData});
   }
 
   private signupData(data: ISignUpData): IAuthDocument {
@@ -52,6 +53,5 @@ export class SignUp {
       avatarColor,
       createdAt: new Date()
     } as IAuthDocument;
-
   }
 }

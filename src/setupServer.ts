@@ -55,7 +55,7 @@ export class ChatServer {
     }
 
     private standartMiddleware(app: Application): void {
-        app.use(compression);
+        app.use(compression());
         app.use(json({limit: '50mb'}));
         app.use(urlencoded({extended: true, limit: '50mb'}));
     }

@@ -2,7 +2,7 @@ export class Helpers {
   static firstLatterUppercase(str: string) {
     return str.toLowerCase()
               .split(' ')
-              .map((item) => `${item.charAt(0).toUpperCase()}${item.slice(1).toLowerCase()}`)
+              .map((item: string) => `${item.charAt(0).toUpperCase()}${item.slice(1).toLowerCase()}`)
               .join(' ');
   }
 
@@ -15,7 +15,7 @@ export class Helpers {
     let result  = ' ';
     const charactersLength = characters.length;
     for (let i = 0; i < integerLength; i++) {
-      result += characters.charAt(Math.floor(Math.random()*charactersLength));
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return parseInt(result, 10);
   }
