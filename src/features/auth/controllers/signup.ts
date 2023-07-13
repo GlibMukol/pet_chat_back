@@ -9,8 +9,10 @@ import { BadRequestError } from '@global/helpers/error-handler';
 import { Helpers } from '@global/helpers/helpers';
 import { UploadApiResponse } from 'cloudinary';
 import { uploads } from '@global/helpers/cloudinary-upload';
+import { IUserDocument } from '@user/interfaces/user.interface';
+import { UserCache } from '@root/shared/redis/user.cache';
 
-
+const userCache: UserCache = new UserCache();
 export class SignUp {
 
   @joiValidation(signupSchema)
@@ -40,6 +42,12 @@ export class SignUp {
       return next(new BadRequestError('File upload: Error occured. Try again.'));
     }
 
+    // Add to redis cache
+    const userDataForCache: IUserDocument = SignUp.prototype.userData(authData, userObjectId);
+    //TODO set to env name of cloudinary lib
+    userDataForCache.profilePicture = `/https://res.cloudinary.com/dsgualnj4/image/upload/v${result.version}/${userObjectId}`;
+    await userCache.saveUserToCache(`${userObjectId}`, uId, userDataForCache);
+
     res.status(HTTP_STATUS.CREATED).json({message: 'User Created', authData});
   }
 
@@ -54,5 +62,50 @@ export class SignUp {
       avatarColor,
       createdAt: new Date()
     } as IAuthDocument;
+  }
+
+  private userData(data: IAuthDocument, userObjectId: ObjectId): IUserDocument {
+    const {
+      _id,
+      username,
+      email,
+      uId,
+      password,
+      avatarColor
+    } = data;
+
+    return {
+      _id: userObjectId,
+      authId: _id,
+      uId,
+      username: Helpers.firstLatterUppercase(username),
+      email,
+      password,
+      avatarColor,
+      profilePicture: '',
+      blocked: [],
+      blockedBy: [],
+      work: '',
+      location: '',
+      school: '',
+      quote: '',
+      bgImageVersion: '',
+      bgImageId: '',
+      followersCount: 0,
+      followingCount: 0,
+      postsCount: 0,
+      notifications: {
+        messages: true,
+        reactions: true,
+        comments: true,
+        follows: true
+      },
+      social: {
+        facebook: '',
+        instagram: '',
+        twitter: '',
+        youtube: ''
+      }
+    } as unknown as IUserDocument;
   }
 }
