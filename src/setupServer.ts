@@ -70,9 +70,9 @@ export class ChatServer {
         });
 
         app.use((error: IErrorResponse, req: Request, res: Response, next: NextFunction) => {
-            log.error(error);
-            if(error instanceof CustumError) {
-                return res.status(error.statusCode).json(error.serializeError);
+          log.error(error);
+          if(error instanceof CustumError) {
+                return res.status(error.statusCode).json(error.serializeError());
             }
             next();
         });

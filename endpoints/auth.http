@@ -12,5 +12,5 @@ withCredentials: true
   "password": "Qaz12wsx",
   "email": "gray.grifon@gmail.com",
   "avatarColor": "green",
-  "avatarIqmage": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHZAq08u4YaR0Jsu2CgeptdxC74y-9QEeFYEAb6YHP&s"
+  "avatarImage": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHZAq08u4YaR0Jsu2CgeptdxC74y-9QEeFYEAb6YHP&s"
 }
