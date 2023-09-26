@@ -30,6 +30,9 @@ export abstract class BaseQueue {
 
     this.log = config.creatLogger(`${queueName}Queue`);
 
+    this.queue.on('global:active', (jobId: string) => {
+      this.log.info(`Job ${jobId} active`); 
+    });
     this.queue.on('completed', (job: Job) => {
       job.remove();
     });
