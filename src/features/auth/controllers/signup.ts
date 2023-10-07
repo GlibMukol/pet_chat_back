@@ -30,6 +30,7 @@ export class SignUp {
 
 
     const authObjectId: ObjectId = new ObjectId();
+    console.log('authObjectId', authObjectId);
     const userObjectId: ObjectId = new ObjectId();
     const uId = `${Helpers.generateRundomIntegers(12)}`;
     const authData: IAuthDocument = SignUp.prototype.signupData({
@@ -52,10 +53,11 @@ export class SignUp {
     //TODO set to env name of cloudinary lib
     userDataForCache.profilePicture = `https://res.cloudinary.com/dsgualnj4/image/upload/v${result.version}/${userObjectId}`;
     await userCache.saveUserToCache(`${userObjectId}`, uId, userDataForCache);
+    console.log('userDataForCache', userDataForCache);
 
     //Add to db
     omit(userDataForCache, ['uId', 'username', 'email', 'avatarColor', 'password']);
-    authQueue.addAuthUserJob('addAuthUserToDb', {value: userDataForCache});
+    authQueue.addAuthUserJob('addAuthUserToDb', {value: authData});
     userQueue.addUserJob('addUserToDb', {value: userDataForCache});
 
     const userJwt: string = SignUp.prototype.signToken(authData, userObjectId);
