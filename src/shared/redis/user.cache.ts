@@ -3,6 +3,8 @@ import { BaseCache } from './base.cache';
 import { config } from '@root/config';
 import { ServerError } from '@global/helpers/error-handler';
 import Logger from 'bunyan';
+import { response } from 'express';
+import { Helpers } from '@global/helpers/helpers';
 
 const log: Logger = config.creatLogger('userCache');
 
@@ -78,5 +80,27 @@ export class UserCache extends BaseCache {
     }
 
 
+  }
+
+  public async getUserFromCache(key: string): Promise<IUserDocument | null> {
+    try {
+      if(!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const response: IUserDocument = await this.client.HGETALL(`users:${key}`) as unknown as IUserDocument;
+      response.createdAt = new Date(Helpers.parseJson(`${response.createdAt}`));
+      response.postsCount = Helpers.parseJson(`${response.postsCount}`);
+      response.blocked = Helpers.parseJson(`${response.blocked };`);
+      response.blockedBy = Helpers.parseJson(`${response.blockedBy}`);
+      response.notifications = Helpers.parseJson(`${response.notifications}`);
+      response.social = Helpers.parseJson(`${response.social}`);
+      response.followersCount = Helpers.parseJson(`${response.followersCount}`);
+      response.followingCount = Helpers.parseJson(`${response.followingCount}`);
+
+      return response;
+    } catch (error) {
+      log.error(error);
+      throw new ServerError('Server errer, try again');
+    }
   }
 }

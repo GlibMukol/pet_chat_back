@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export class Helpers {
   static firstLatterUppercase(str: string) {
     return str.toLowerCase()
@@ -18,5 +19,13 @@ export class Helpers {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return parseInt(result, 10);
+  }
+
+  static parseJson(props: string): any {
+    try {
+      return JSON.parse(props);
+    } catch (error) {
+      return props;
+    }
   }
 }

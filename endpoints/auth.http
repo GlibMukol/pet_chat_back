@@ -32,4 +32,10 @@ Content-Type: application/json
 Accept: application/json
 withCredentials: true
 
+###
+GET {{baseUrl}}/{{urlPath}}/currentuser
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
 
