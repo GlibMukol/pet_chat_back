@@ -1,6 +1,6 @@
 import HTTP_STATUS from 'http-status-codes';
 import { Request, Response } from 'express';
-import { UserCache } from '@root/shared/redis/user.cache';
+import { UserCache } from '@service/redis/user.cache';
 import { IUserDocument } from '@user/interfaces/user.interface';
 import { userService } from '@service/db/user.service';
 
