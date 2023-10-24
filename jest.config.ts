@@ -20,7 +20,17 @@ const config: Config.InitialOptions = {
       statements: 1
     }
   },
-  coverageReporters: ['text-summary', 'lcov']
+  coverageReporters: ['text-summary', 'lcov'],
+  moduleNameMapper: {
+    '@auth/(./*)': ['<rootDir>/src/features/auth/$1'],
+    '@user/(./*)': ['<rootDir>/src/features/user/$1'],
+    '@global/(./*)': ['<rootDir>/src/shared/global/$1'],
+    '@service/(./*)': ['<rootDir>/src/shared/service/$1'],
+    '@socket/(./*)': ['<rootDir>/src/shared/socket/$1'],
+    '@workers/(./*)': ['<rootDir>/src/shared/workers/$1'],
+    '@root/(./*)': ['<rootDir>/src/$1'],
+
+  }
 };
 
 export default config;

@@ -33,8 +33,9 @@
         "@global/*": ["src/shared/globals/*"],
         "@service/*": ["src/shared/services/*"],
         "@socket/*": ["src/shared/sockets/*"],
-        "@workers/*": ["src/features/shared/workers/*"],
+        "@workers/*": ["src/shared/workers/*"],
         "@root/*": ["src/*"]
     }
-  }
+  },
+  "exclude": ["./jest.config.ts"]
 }
