@@ -4,3 +4,4 @@ build
 .vscode
 Makefile
 dump.rdb
+coverage

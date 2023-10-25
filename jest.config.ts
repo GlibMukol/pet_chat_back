@@ -22,13 +22,14 @@ const config: Config.InitialOptions = {
   },
   coverageReporters: ['text-summary', 'lcov'],
   moduleNameMapper: {
-    '@auth/(./*)': ['<rootDir>/src/features/auth/$1'],
-    '@user/(./*)': ['<rootDir>/src/features/user/$1'],
-    '@global/(./*)': ['<rootDir>/src/shared/global/$1'],
-    '@service/(./*)': ['<rootDir>/src/shared/service/$1'],
-    '@socket/(./*)': ['<rootDir>/src/shared/socket/$1'],
-    '@workers/(./*)': ['<rootDir>/src/shared/workers/$1'],
-    '@root/(./*)': ['<rootDir>/src/$1'],
+    '@auth/(.*)': ['<rootDir>/src/features/auth/$1'],
+    '@user/(.*)': ['<rootDir>/src/features/user/$1'],
+    '@global/(.*)': ['<rootDir>/src/shared/globals/$1'],
+    '@service/(.*)': ['<rootDir>/src/shared/services/$1'],
+    '@socket/(.*)': ['<rootDir>/src/shared/socket/$1'],
+    '@workers/(.*)': ['<rootDir>/src/shared/workers/$1'],
+    '@mock/(.*)': ['<rootDir>/src/mocks/$1'],
+    '@root/(.*)': ['<rootDir>/src/$1'],
 
   }
 };

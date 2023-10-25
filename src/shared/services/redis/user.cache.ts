@@ -3,7 +3,6 @@ import { BaseCache } from './base.cache';
 import { config } from '@root/config';
 import { ServerError } from '@global/helpers/error-handler';
 import Logger from 'bunyan';
-import { response } from 'express';
 import { Helpers } from '@global/helpers/helpers';
 
 const log: Logger = config.creatLogger('userCache');
@@ -100,7 +99,7 @@ export class UserCache extends BaseCache {
       return response;
     } catch (error) {
       log.error(error);
-      throw new ServerError('Server errer, try again');
+      throw new ServerError('Server error, try again');
     }
   }
 }

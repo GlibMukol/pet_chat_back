@@ -4,14 +4,15 @@
   "description": "back end for my pet project",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon -r tsconfig-paths/register src/app.ts | ./node_modules/.bin/bunyan",
     "lint:check": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "prettier:check": "prettier --check 'src/**/*.{ts,json}'",
     "prettier:fix": "prettier --write 'src/**/*.{ts,json}'",
     "build": "tspc -p .",
-    "start": "node build/app.js"
+    "start": "node build/app.js",
+    "test": "jest --coverage=true -w=1 --forceExit --detectOpenHandles --watchAll=false",
+    "test-dev": "jest --coverage=true -w=1 --forceExit  --detectOpenHandles --watchAll=true"
   },
   "author": "gray.grifon@gmail.com",
   "license": "ISC",

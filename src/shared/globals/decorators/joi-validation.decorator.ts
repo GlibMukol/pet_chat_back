@@ -14,7 +14,7 @@ export function joiValidation(schema: ObjectSchema): IJoiDecorator {
       const next: NextFunction = args[2];
       const {error} = await Promise.resolve(schema.validate(req.body));
       if(error?.details) {
-        next(new JoiRequestValidationError(error.details[0].message));
+        return next(new JoiRequestValidationError(error.details[0].message));
       }
       return originalMethod.apply(this, args);
     };
