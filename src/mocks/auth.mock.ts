@@ -69,8 +69,8 @@ export interface IAuthMock {
 export const authUserPayload: AuthPayload = {
   userId: '60263f14648fed5246e322d9',
   uId: '1621613119252066',
-  username: 'Manny',
-  email: 'manny@me.com',
+  username: 'graywave',
+  email: 'gray@mail.com',
   avatarColor: '#9c27b0',
   iat: 12345,
 };
@@ -81,7 +81,7 @@ export const authMock = {
   username: 'graywave',
   email: 'gray@mail.com',
   avatarColor: '#9c27b0',
-  createdAt: '2022-08-31T07:42:24.451Z',
+  createdAt: '2023-08-31T07:42:24.451Z',
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   save: () => {},
   comparePassword: () => false,

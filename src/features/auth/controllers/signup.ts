@@ -80,13 +80,11 @@ export class SignUp {
     const userJwt: string = SignUp.prototype.signToken(authData, userObjectId);
     req.session = { jwt: userJwt };
 
-    res
-      .status(HTTP_STATUS.CREATED)
-      .json({
-        message: 'User Created',
-        user: userDataForCache,
-        token: userJwt,
-      });
+    res.status(HTTP_STATUS.CREATED).json({
+      message: 'User Created',
+      user: userDataForCache,
+      token: userJwt,
+    });
   }
 
   private signToken(data: IAuthDocument, userObjectId: ObjectId): string {

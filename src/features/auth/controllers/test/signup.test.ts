@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { describe, jest, it, expect } from '@jest/globals';
+import {
+  describe,
+  jest,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+} from '@jest/globals';
 import { Request, Response } from 'express';
 import * as cloudinaryUploads from '@global/helpers/cloudinary-upload';
 import { authMock, authMockRequest, authMockResponse } from '@mock/auth.mock';
@@ -399,10 +406,3 @@ describe('SignUp', () => {
     });
   });
 });
-function beforeEach(arg0: () => void) {
-  throw new Error('Function not implemented.');
-}
-
-function afterEach(arg0: () => void) {
-  throw new Error('Function not implemented.');
-}
