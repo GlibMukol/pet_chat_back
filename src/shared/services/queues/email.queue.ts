@@ -3,9 +3,13 @@ import { BaseQueue } from './base.queue';
 import { emailWorker } from '@root/shared/workers/email.worker';
 
 class EmailQueue extends BaseQueue {
-  constructor(){
+  constructor() {
     super('email');
-    this.proccessJob('forgotsPasswordEmail', 5, emailWorker.addNotificationEmail);
+    this.proccessJob(
+      'forgotsPasswordEmail',
+      5,
+      emailWorker.addNotificationEmail,
+    );
   }
 
   public addEmailJob(name: string, data: IEmailJob): void {

@@ -1,6 +1,6 @@
-import express, {Router} from 'express';
+import express, { Router } from 'express';
 import { CurrentUser } from '@auth/controllers/currents-user';
-import { authMiddleware} from '@global/helpers/auth-middleware';
+import { authMiddleware } from '@global/helpers/auth-middleware';
 class CurrentsUserRoputes {
   private router: Router;
 
@@ -9,17 +9,18 @@ class CurrentsUserRoputes {
   }
 
   public routes(): Router {
-
     return this.router;
   }
 
   public read(): Router {
-
-    this.router.get('/currentuser', authMiddleware.checkAuth, CurrentUser.prototype.read);
+    this.router.get(
+      '/currentuser',
+      authMiddleware.checkAuth,
+      CurrentUser.prototype.read,
+    );
     return this.router;
   }
-
-
 }
 
-export const currentsUserRoutes: CurrentsUserRoputes = new CurrentsUserRoputes();
+export const currentsUserRoutes: CurrentsUserRoputes =
+  new CurrentsUserRoputes();

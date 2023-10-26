@@ -1,35 +1,42 @@
 import { AuthPayload, IAuthDocument } from '@auth/interfaces/auth.interface';
 import { Response } from 'express';
-import { jest} from '@jest/globals';
+import { jest } from '@jest/globals';
 
 export interface IJWT {
-  jwt?: string
-};
-
+  jwt?: string;
+}
 
 type MockResponse = {
-  session: IJWT,
-  body: IAuthMock,
-  params: any,
-  currentUser: AuthPayload | null | undefined
-}
-type MockRequest = (a: IJWT, b: IAuthMock, c?: AuthPayload | null, p?: any) => MockResponse
+  session: IJWT;
+  body: IAuthMock;
+  params: any;
+  currentUser: AuthPayload | null | undefined;
+};
+type MockRequest = (
+  a: IJWT,
+  b: IAuthMock,
+  c?: AuthPayload | null,
+  p?: any,
+) => MockResponse;
 
-export const authMockRequest: MockRequest = (session, body, currentUser, params) => ({
+export const authMockRequest: MockRequest = (
   session,
   body,
   currentUser,
-  params
+  params,
+) => ({
+  session,
+  body,
+  currentUser,
+  params,
 });
 
-
 type MokedResponse = (code: number) => Response<any, Record<string, any>>;
-
 
 export const authMockResponse = (): Response => {
   const res: Response = {} as Response;
   res.status = jest.fn().mockReturnValue(res) as MokedResponse;
-  res.status = jest.fn().mockReturnValue(res) as MokedResponse;
+  res.json = jest.fn().mockReturnValue(null) as never;
   return res;
 };
 
@@ -65,7 +72,7 @@ export const authUserPayload: AuthPayload = {
   username: 'Manny',
   email: 'manny@me.com',
   avatarColor: '#9c27b0',
-  iat: 12345
+  iat: 12345,
 };
 
 export const authMock = {
@@ -77,5 +84,5 @@ export const authMock = {
   createdAt: '2022-08-31T07:42:24.451Z',
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   save: () => {},
-  comparePassword: () => false
+  comparePassword: () => false,
 } as unknown as IAuthDocument;

@@ -1,10 +1,9 @@
-import {DoneCallback, Job} from 'bull';
+import { DoneCallback, Job } from 'bull';
 import Logger from 'bunyan';
-import {config} from '@root/config';
+import { config } from '@root/config';
 import { authService } from '@service/db/auth.service';
 
-
-const log: Logger =  config.creatLogger('authWorker');
+const log: Logger = config.creatLogger('authWorker');
 
 class AuthWorker {
   async addAuthUserToDB(job: Job, done: DoneCallback): Promise<void> {

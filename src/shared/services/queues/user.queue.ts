@@ -13,5 +13,4 @@ class UserQueue extends BaseQueue {
   }
 }
 
-
 export const userQueue: UserQueue = new UserQueue();

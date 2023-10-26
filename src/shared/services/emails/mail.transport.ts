@@ -12,21 +12,26 @@ interface IMailOptions {
   html: string;
 }
 
-
 const log: Logger = config.creatLogger('mailOption');
 
 sendGridMail.setApiKey(config.SEND_GRIG_API_KEY!);
 
 class MailTransport {
-
-  public async sendEmail(receiverEmail: string, subject: string, body: string): Promise<void> {
-    config.NEDE_ENV === 'test' || config.NEDE_ENV === 'development' ?
-          this.developmentEmailSender(receiverEmail, subject, body) :
-          this.productionEmailSender(receiverEmail, subject, body);
+  public async sendEmail(
+    receiverEmail: string,
+    subject: string,
+    body: string,
+  ): Promise<void> {
+    config.NEDE_ENV === 'test' || config.NEDE_ENV === 'development'
+      ? this.developmentEmailSender(receiverEmail, subject, body)
+      : this.productionEmailSender(receiverEmail, subject, body);
   }
 
-  private async developmentEmailSender(receiverEmail: string, subject: string, body: string): Promise<void> {
-
+  private async developmentEmailSender(
+    receiverEmail: string,
+    subject: string,
+    body: string,
+  ): Promise<void> {
     const transporter: Mail = nodemailer.createTransport({
       host: 'smtp.ethereal.email',
       port: 587,
@@ -41,7 +46,7 @@ class MailTransport {
       from: `Pet app <${config.SENDER_EMAIL}>`,
       to: receiverEmail,
       subject,
-      html: body
+      html: body,
     };
 
     try {
@@ -52,13 +57,16 @@ class MailTransport {
     }
   }
 
-  private async productionEmailSender(receiverEmail: string, subject: string, body: string): Promise<void> {
-
+  private async productionEmailSender(
+    receiverEmail: string,
+    subject: string,
+    body: string,
+  ): Promise<void> {
     const mailOptions: IMailOptions = {
       from: `Pet app <${config.SENDER_EMAIL}>`,
       to: receiverEmail,
       subject,
-      html: body
+      html: body,
     };
 
     try {
@@ -69,7 +77,6 @@ class MailTransport {
       throw new BadRequestError('Error sending email');
     }
   }
-
 }
 
 export const mailTransport: MailTransport = new MailTransport();

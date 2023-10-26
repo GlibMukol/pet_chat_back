@@ -10,13 +10,17 @@ export class CurrentUser {
     let isUser = false;
     let token = null;
     let user = null;
-    const cachedUser: IUserDocument = await userCache.getUserFromCache(`${req.currentUser?.userId}`) as IUserDocument;
-    const exitingUser: IUserDocument =  cachedUser || await userService.getUserById(`${req.currentUser?.userId}`);
-    if(Object.keys(exitingUser).length) {
+    const cachedUser: IUserDocument = (await userCache.getUserFromCache(
+      `${req.currentUser?.userId}`,
+    )) as IUserDocument;
+    const exitingUser: IUserDocument =
+      cachedUser ||
+      (await userService.getUserById(`${req.currentUser?.userId}`));
+    if (Object.keys(exitingUser).length) {
       isUser = true;
       token = req.session?.jwt;
       user = exitingUser;
     }
-    res.status(HTTP_STATUS.OK).json({token, isUser, user});
+    res.status(HTTP_STATUS.OK).json({ token, isUser, user });
   }
 }

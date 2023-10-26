@@ -1,7 +1,6 @@
 import Logger from 'bunyan';
-import {config} from '@root/config';
+import { config } from '@root/config';
 import { BaseCache } from './base.cache';
-
 
 const log: Logger = config.creatLogger('redisConnection');
 
@@ -16,10 +15,9 @@ class RedisConnection extends BaseCache {
       const res = await this.client.ping();
       log.info(`REDIS PING => ${res}`);
     } catch (error) {
-        log.error(error);
+      log.error(error);
     }
   }
 }
-
 
 export const redisConnection: RedisConnection = new RedisConnection();

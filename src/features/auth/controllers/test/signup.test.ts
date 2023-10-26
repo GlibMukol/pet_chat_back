@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { describe, jest, it, expect } from '@jest/globals';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import * as cloudinaryUploads from '@global/helpers/cloudinary-upload';
 import { authMock, authMockRequest, authMockResponse } from '@mock/auth.mock';
 import { SignUp } from '../signup';
@@ -9,14 +9,23 @@ import {
   JoiRequestValidationError,
 } from '@global/helpers/error-handler';
 import { authService } from '@service/db/auth.service';
+import { UserCache } from '@service/redis/user.cache';
 
 jest.mock('@service/queues/base.queue');
 jest.mock('@service/redis/base.cache');
+jest.mock('@service/redis/user.cache');
 jest.mock('@service/queues/user.queue');
 jest.mock('@service/queues/auth.queue');
 jest.mock('@global/helpers/cloudinary-upload');
 
 describe('SignUp', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   it('should throw an error if username is not availible', async () => {
     const req: Request = authMockRequest(
       {},
@@ -36,7 +45,6 @@ describe('SignUp', () => {
     const error = new JoiRequestValidationError('Username is a required field');
 
     expect(next).toHaveBeenCalledWith(error);
-
   });
 
   it('should throw error if username to short', async () => {
@@ -58,7 +66,6 @@ describe('SignUp', () => {
 
     const error = new JoiRequestValidationError('Invalid username');
     expect(next).toHaveBeenCalledWith(error);
-
   });
 
   it('should throw error if username to long', async () => {
@@ -98,9 +105,10 @@ describe('SignUp', () => {
 
     const next = jest.fn();
     await SignUp.prototype.create(req, res, next);
-    const error = new JoiRequestValidationError('Username must be of type string');
+    const error = new JoiRequestValidationError(
+      'Username must be of type string',
+    );
     expect(next).toHaveBeenCalledWith(error);
-
   });
 
   it('should throw error if pwd not a string', async () => {
@@ -119,20 +127,24 @@ describe('SignUp', () => {
 
     const next = jest.fn();
     await SignUp.prototype.create(req, res, next);
-    const error = new JoiRequestValidationError('Password must be of type string');
+    const error = new JoiRequestValidationError(
+      'Password must be of type string',
+    );
 
     expect(next).toHaveBeenCalledWith(error);
-
   });
 
   it('should throw error if pwd to short', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'gray@test.com',
-      password: 'nul',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@test.com',
+        password: 'nul',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -144,13 +156,16 @@ describe('SignUp', () => {
   });
 
   it('should throw error if pwd to long', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'gray@test.com',
-      password: 'nul',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@test.com',
+        password: 'nul',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -162,12 +177,15 @@ describe('SignUp', () => {
   });
 
   it('should throw error if pwd not exist', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'gray@test.com',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@test.com',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -179,16 +197,18 @@ describe('SignUp', () => {
   });
 
   it('should throw error if pwd empty', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'gray@test.com',
-      password: '',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@test.com',
+        password: '',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
-
 
     const next = jest.fn();
     await SignUp.prototype.create(req, res, next);
@@ -198,13 +218,16 @@ describe('SignUp', () => {
   });
 
   it('should throw error if email not string', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: null,
-      password: 'awdawdaw',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: null,
+        password: 'awdawdaw',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -216,13 +239,16 @@ describe('SignUp', () => {
   });
 
   it('should throw error if email not valid', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'asdawawda',
-      password: 'awdawdaw',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'asdawawda',
+        password: 'awdawdaw',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -234,13 +260,16 @@ describe('SignUp', () => {
   });
 
   it('should throw error if email is empty', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: '',
-      password: 'awdawda',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: '',
+        password: 'awdawda',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -249,17 +278,19 @@ describe('SignUp', () => {
     const error = new JoiRequestValidationError('Email is a required field');
 
     expect(next).toHaveBeenCalledWith(error);
-
   });
 
   it('should throw error if email is empty', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: '',
-      password: 'adwawa',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: '',
+        password: 'adwawa',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -271,12 +302,15 @@ describe('SignUp', () => {
   });
 
   it('should throw error if avatar color empty', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'gray@mail.com',
-      password: 'adwawa',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@mail.com',
+        password: 'adwawa',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -288,12 +322,15 @@ describe('SignUp', () => {
   });
 
   it('should throw error if avatar image empty', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'gray@mail.com',
-      password: 'adwawa',
-      avatarColor: 'red',
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@mail.com',
+        password: 'adwawa',
+        avatarColor: 'red',
+      },
+    ) as Request;
 
     const res: Response = authMockResponse();
 
@@ -302,20 +339,21 @@ describe('SignUp', () => {
     const error = new JoiRequestValidationError('Avatar image is required');
 
     expect(next).toHaveBeenCalledWith(error);
-
   });
 
   it('should throw unauthorize error, if user exist', async () => {
-    const req: Request = authMockRequest({}, {
-      username: 'graywave',
-      email: 'gray@mail.com',
-      password: 'adwawa',
-      avatarColor: 'red',
-      avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa=='
-    }) as Request;
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@mail.com',
+        password: 'adwawa',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
     const fn = jest.spyOn(authService, 'getAuthUserByUsername');
     fn.mockResolvedValue(authMock);
-
 
     const res: Response = authMockResponse();
 
@@ -324,9 +362,47 @@ describe('SignUp', () => {
 
     const error = new BadRequestError('Invalid credentials, user exist');
     expect(next).toHaveBeenCalledWith(error);
-
   });
-  it('should set session for valid credentials and send correct json response',  () => {
 
+  it('should set session for valid credentials and send correct json response', async () => {
+    const req: Request = authMockRequest(
+      {},
+      {
+        username: 'graywave',
+        email: 'gray@mail.com',
+        password: 'adwawa',
+        avatarColor: 'red',
+        avatarImage: 'data:text/plain:base64,KAJHFBGIEFasdawdwa==',
+      },
+    ) as Request;
+    const fn = jest.spyOn(authService, 'getAuthUserByUsername');
+    fn.mockResolvedValue(null as any);
+
+    jest
+      .spyOn(cloudinaryUploads, 'uploads')
+      .mockImplementation((): any =>
+        Promise.resolve({ version: '111111', public_id: '123123' }),
+      );
+    const userSpy = jest.spyOn(UserCache.prototype, 'saveUserToCache');
+
+    const res: Response = authMockResponse();
+
+    const next = jest.fn();
+
+    await SignUp.prototype.create(req, res, next);
+
+    expect(next).not.toBeCalled();
+    expect(res.json).toHaveBeenLastCalledWith({
+      message: 'User Created',
+      token: req?.session?.jwt,
+      user: userSpy.mock.calls[0][2],
+    });
   });
 });
+function beforeEach(arg0: () => void) {
+  throw new Error('Function not implemented.');
+}
+
+function afterEach(arg0: () => void) {
+  throw new Error('Function not implemented.');
+}

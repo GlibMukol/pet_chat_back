@@ -1,10 +1,10 @@
 import HTTP_STATUS from 'http-status-codes';
 
 export interface IErrorResponse {
-    message: string;
-    statusCode: number;
-    status: string;
-    serializeError(): IError
+  message: string;
+  statusCode: number;
+  status: string;
+  serializeError(): IError;
 }
 
 export interface IError {
@@ -13,74 +13,72 @@ export interface IError {
   status: string;
 }
 
-
 export abstract class CustumError extends Error {
-    abstract statusCode: number;
-    abstract status: string;
+  abstract statusCode: number;
+  abstract status: string;
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 
-    serializeError(): IError {
-        return {
-            message: this.message,
-            status: this.status,
-            statusCode: this.statusCode
-        };
-    }
+  serializeError(): IError {
+    return {
+      message: this.message,
+      status: this.status,
+      statusCode: this.statusCode,
+    };
+  }
 }
 
 export class JoiRequestValidationError extends CustumError {
-    statusCode = HTTP_STATUS.BAD_REQUEST;
-    status = 'error';
+  statusCode = HTTP_STATUS.BAD_REQUEST;
+  status = 'error';
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 }
 
 export class BadRequestError extends CustumError {
-    statusCode = HTTP_STATUS.BAD_REQUEST;
-    status = 'error';
+  statusCode = HTTP_STATUS.BAD_REQUEST;
+  status = 'error';
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 }
 
 export class NotFoundError extends CustumError {
-    statusCode = HTTP_STATUS.NOT_FOUND;
-    status = 'error';
+  statusCode = HTTP_STATUS.NOT_FOUND;
+  status = 'error';
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 }
 
 export class NotAutorizedError extends CustumError {
-    statusCode = HTTP_STATUS.UNAUTHORIZED;
-    status = 'error';
+  statusCode = HTTP_STATUS.UNAUTHORIZED;
+  status = 'error';
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 }
 export class FileTooLargeError extends CustumError {
-    statusCode = HTTP_STATUS.REQUEST_TOO_LONG;
-    status = 'error';
+  statusCode = HTTP_STATUS.REQUEST_TOO_LONG;
+  status = 'error';
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 }
 
 export class ServerError extends CustumError {
-    statusCode = HTTP_STATUS.SERVICE_UNAVAILABLE;
-    status = 'error';
+  statusCode = HTTP_STATUS.SERVICE_UNAVAILABLE;
+  status = 'error';
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 }
-
