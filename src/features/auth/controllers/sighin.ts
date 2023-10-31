@@ -45,11 +45,10 @@ export class SignIn {
       },
       config.JWB_TOKEN!,
     );
-
     req.session = { jwt: userJwt };
     const userDocument: IUserDocument = {
       ...user,
-      authId: exitingUser!.id,
+      authId: exitingUser!._id,
       username: exitingUser!.username,
       email: exitingUser!.email,
       avatarColor: exitingUser!.avatarColor,
