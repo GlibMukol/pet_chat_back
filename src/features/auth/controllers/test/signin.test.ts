@@ -178,7 +178,6 @@ describe('SignIn', () => {
     jest.spyOn(JWT, 'sign').mockImplementation(() => 'token');
 
     await SignIn.prototype.read(req, res, next);
-    console.log('req.session', req.session);
     expect(req.session?.jwt).toBeDefined();
     expect(res.json).toHaveBeenCalledWith({
       message: 'User login successfully',
