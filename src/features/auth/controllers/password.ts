@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { config } from '@root/config';
 import HTTP_STATUS from 'http-status-codes';
 import { authService } from '@service/db/auth.service';
@@ -16,14 +16,14 @@ import { resetPasswordTemplate } from '@service/emails/templates/reset-password/
 
 export class Password {
   @joiValidation(emailSchema)
-  public async create(req: Request, res: Response): Promise<void> {
+  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { email } = req.body;
     const existingUser: IAuthDocument = await authService.getAuthUserByEmail(
       email,
     );
 
     if (!existingUser) {
-      throw new BadRequestError('Invalid credentials');
+      return next(new BadRequestError('Invalid credentials'));
     }
 
     const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));
@@ -49,18 +49,15 @@ export class Password {
   }
 
   @joiValidation(passwordSchema)
-  public async update(req: Request, res: Response): Promise<void> {
-    const { password, confirmPassword } = req.body;
+  public async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const { password } = req.body;
     const { token } = req.params;
-    if (password !== confirmPassword) {
-      throw new BadRequestError('Password not match');
-    }
     const existingUser: IAuthDocument = await authService.getAuthUserByPwdToken(
       token,
     );
 
     if (!existingUser) {
-      throw new BadRequestError('Reset token has expired.');
+      return next (new BadRequestError('Reset token has expired.'));
     }
 
     existingUser.password = password;
@@ -75,7 +72,6 @@ export class Password {
       date: moment().format('DD//MM//YYYY HH:mm'),
     };
 
-    // const resetLink =  `${config.CLIENT_URL}/reset-password?token=${randomCharacter}`;
     const template: string =
       resetPasswordTemplate.resetPasswordConfirmationTemplate(templateParams);
     emailQueue.addEmailJob('forgotsPasswordEmail', {
@@ -85,6 +81,6 @@ export class Password {
     });
     res
       .status(HTTP_STATUS.OK)
-      .json({ message: 'Passwor successfully updated' });
+      .json({ message: 'Password successfully updated' });
   }
 }
