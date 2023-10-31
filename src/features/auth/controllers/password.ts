@@ -16,7 +16,11 @@ import { resetPasswordTemplate } from '@service/emails/templates/reset-password/
 
 export class Password {
   @joiValidation(emailSchema)
-  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async create(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     const { email } = req.body;
     const existingUser: IAuthDocument = await authService.getAuthUserByEmail(
       email,
@@ -49,7 +53,11 @@ export class Password {
   }
 
   @joiValidation(passwordSchema)
-  public async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async update(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     const { password } = req.body;
     const { token } = req.params;
     const existingUser: IAuthDocument = await authService.getAuthUserByPwdToken(
@@ -57,7 +65,7 @@ export class Password {
     );
 
     if (!existingUser) {
-      return next (new BadRequestError('Reset token has expired.'));
+      return next(new BadRequestError('Reset token has expired.'));
     }
 
     existingUser.password = password;

@@ -6,6 +6,6 @@ export class SignOut {
     req.session = null;
     res
       .status(HTTP_STATUS.OK)
-      .json({ message: 'Logout successful', user: {}, token: '' });
+      .json({ message: 'Logout successfull', user: {}, token: '' });
   }
 }

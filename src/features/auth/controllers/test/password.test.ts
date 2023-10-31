@@ -9,7 +9,10 @@ import {
 import { authMock, authMockRequest, authMockResponse } from '@mock/auth.mock';
 import { Request, Response } from 'express';
 import { Password } from '../password';
-import { BadRequestError, JoiRequestValidationError } from '@global/helpers/error-handler';
+import {
+  BadRequestError,
+  JoiRequestValidationError,
+} from '@global/helpers/error-handler';
 import { authService } from '@service/db/auth.service';
 import { AuthPayload } from '@auth/interfaces/auth.interface';
 
@@ -23,10 +26,10 @@ enum PASSWORD {
   INVALID_EMAIL = 'invalid',
   CORRECT_EMAIL = 'gray@mail.com',
   WRONG_PWD = 'wrong_pwd',
-  CORRECT_PWD = 'qwerty'
-};
+  CORRECT_PWD = 'qwerty',
+}
 
-describe('Password', () =>  {
+describe('Password', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -35,10 +38,12 @@ describe('Password', () =>  {
     jest.clearAllMocks();
   });
 
-
   describe('create', () => {
     it('should pass error to the next function, if invalid email', async () => {
-      const  req: Request = authMockRequest({}, {email: PASSWORD.INVALID_EMAIL}) as Request;
+      const req: Request = authMockRequest(
+        {},
+        { email: PASSWORD.INVALID_EMAIL },
+      ) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
@@ -46,11 +51,10 @@ describe('Password', () =>  {
 
       await Password.prototype.create(req, res, next);
       expect(next).toHaveBeenCalledWith(error);
-
     });
 
     it('should pass error to the next function, if email not exist', async () => {
-      const  req: Request = authMockRequest({}, {email: null}) as Request;
+      const req: Request = authMockRequest({}, { email: null }) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
@@ -58,15 +62,19 @@ describe('Password', () =>  {
 
       await Password.prototype.create(req, res, next);
       expect(next).toHaveBeenCalledWith(error);
-
     });
 
     it('should pass error to the next function, user not exist', async () => {
-      const  req: Request = authMockRequest({}, {email: PASSWORD.CORRECT_EMAIL}) as Request;
+      const req: Request = authMockRequest(
+        {},
+        { email: PASSWORD.CORRECT_EMAIL },
+      ) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
-      jest.spyOn(authService, 'getAuthUserByEmail').mockImplementation(() => Promise.resolve(null) as any);
+      jest
+        .spyOn(authService, 'getAuthUserByEmail')
+        .mockImplementation(() => Promise.resolve(null) as any);
 
       const error = new BadRequestError('Invalid credentials');
 
@@ -75,30 +83,35 @@ describe('Password', () =>  {
     });
 
     it('should send email, and message if all ok', async () => {
-      const req: Request = authMockRequest({} , {email: PASSWORD.CORRECT_EMAIL}) as Request;
+      const req: Request = authMockRequest(
+        {},
+        { email: PASSWORD.CORRECT_EMAIL },
+      ) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
       jest.spyOn(authService, 'getAuthUserByEmail').mockResolvedValue(authMock);
       await Password.prototype.create(req, res, next);
       expect(res.json).toHaveBeenCalledWith({
-        message: 'Password reset email send.'
+        message: 'Password reset email send.',
       });
     });
   });
 
   describe('update', () => {
     it('should pass error to the next function if password not a string', async () => {
-      const req: Request = authMockRequest({}, {password : null}) as Request;
+      const req: Request = authMockRequest({}, { password: null }) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
-      const error = new JoiRequestValidationError('Password should be of type string');
+      const error = new JoiRequestValidationError(
+        'Password should be of type string',
+      );
       await Password.prototype.update(req, res, next);
       expect(next).toHaveBeenCalledWith(error);
     });
 
     it('should pass error to next function if password to short', async () => {
-      const req: Request = authMockRequest({}, {password: 'asd'}) as Request;
+      const req: Request = authMockRequest({}, { password: 'asd' }) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
@@ -109,7 +122,10 @@ describe('Password', () =>  {
     });
 
     it('should pass error to next function if password to long', async () => {
-      const req: Request = authMockRequest({}, {password: 'asdasdasdawawdaw'}) as Request;
+      const req: Request = authMockRequest(
+        {},
+        { password: 'asdasdasdawawdaw' },
+      ) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
@@ -120,21 +136,26 @@ describe('Password', () =>  {
     });
 
     it('should pass error to next function if password is empty string', async () => {
-      const req: Request = authMockRequest({}, {password: ''}) as Request;
+      const req: Request = authMockRequest({}, { password: '' }) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
-      const error = new JoiRequestValidationError('Password is a required field');
+      const error = new JoiRequestValidationError(
+        'Password is a required field',
+      );
 
       await Password.prototype.update(req, res, next);
       expect(next).toHaveBeenCalledWith(error);
     });
 
     it('should pass error to next function if password !== confirmPassword', async () => {
-      const req: Request = authMockRequest({}, {
-        password: PASSWORD.CORRECT_PWD,
-        confirmPassword: PASSWORD.WRONG_PWD
-      }) as Request;
+      const req: Request = authMockRequest(
+        {},
+        {
+          password: PASSWORD.CORRECT_PWD,
+          confirmPassword: PASSWORD.WRONG_PWD,
+        },
+      ) as Request;
       const res = authMockResponse();
       const next = jest.fn();
 
@@ -145,40 +166,53 @@ describe('Password', () =>  {
     });
 
     it('shoul pass error to the next function if token expire', async () => {
-      const req: Request = authMockRequest({}, {
-        password: PASSWORD.CORRECT_PWD,
-        confirmPassword: PASSWORD.CORRECT_PWD
-      }, {} as AuthPayload, {
-        token: 'expire_token'
-      }) as Request;
+      const req: Request = authMockRequest(
+        {},
+        {
+          password: PASSWORD.CORRECT_PWD,
+          confirmPassword: PASSWORD.CORRECT_PWD,
+        },
+        {} as AuthPayload,
+        {
+          token: 'expire_token',
+        },
+      ) as Request;
       const res: Response = authMockResponse();
       const next = jest.fn();
 
       const error = new BadRequestError('Reset token has expired.');
 
-      jest.spyOn(authService, 'getAuthUserByPwdToken').mockResolvedValue(null as any);
+      jest
+        .spyOn(authService, 'getAuthUserByPwdToken')
+        .mockResolvedValue(null as any);
 
       await Password.prototype.update(req, res, next);
       expect(next).toHaveBeenLastCalledWith(error);
     });
 
-    it('shoul send response if all ok', async() => {
-      const req: Request = authMockRequest({}, {
-        password: PASSWORD.CORRECT_PWD,
-        confirmPassword: PASSWORD.CORRECT_PWD
-      }, {}  as AuthPayload, {
-        token: 'valid_token'
-      }) as Request;
+    it('shoul send response if all ok', async () => {
+      const req: Request = authMockRequest(
+        {},
+        {
+          password: PASSWORD.CORRECT_PWD,
+          confirmPassword: PASSWORD.CORRECT_PWD,
+        },
+        {} as AuthPayload,
+        {
+          token: 'valid_token',
+        },
+      ) as Request;
 
       const res: Response = authMockResponse();
       const next = jest.fn();
 
-      jest.spyOn(authService, 'getAuthUserByPwdToken').mockResolvedValue(authMock);
+      jest
+        .spyOn(authService, 'getAuthUserByPwdToken')
+        .mockResolvedValue(authMock);
       await Password.prototype.update(req, res, next);
       expect(res.json).toHaveBeenCalledWith({
-        message: 'Password successfully updated'
+        message: 'Password successfully updated',
       });
     });
-
   });
 });

@@ -13,12 +13,14 @@ import { JoiRequestValidationError } from '@global/helpers/error-handler';
 import { authService } from '@service/db/auth.service';
 import { userService } from '@service/db/user.service';
 import { mergedAuthAndUserData } from '@mock/user.mock';
-// import { BadRequestError } from '@global/helpers/error-handler';
+import JWT from 'jsonwebtoken';
 
 enum USER {
   USERNAME = 'graywave',
   PASSWORD = 'qwerty',
 }
+
+jest.mock('jsonwebtoken');
 
 jest.useFakeTimers();
 describe('SignIn', () => {
@@ -173,7 +175,10 @@ describe('SignIn', () => {
       .spyOn(userService, 'getUserByAuthId')
       .mockResolvedValue(mergedAuthAndUserData);
 
+    jest.spyOn(JWT, 'sign').mockImplementation(() => 'token');
+
     await SignIn.prototype.read(req, res, next);
+    console.log('req.session', req.session);
     expect(req.session?.jwt).toBeDefined();
     expect(res.json).toHaveBeenCalledWith({
       message: 'User login successfully',
