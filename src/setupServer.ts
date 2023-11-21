@@ -21,6 +21,7 @@ import 'express-async-error';
 import { CustumError, IErrorResponse } from '@global/helpers/error-handler';
 import Logger from 'bunyan';
 import { config } from '@root/config';
+import { SocketIOPostHandler } from '@socket/post.socket';
 
 const SERVER_PORT = 5000;
 const log: Logger = config.creatLogger('setupServer');
@@ -129,5 +130,8 @@ export class ChatServer {
 
   private socketIOConnection(io: ServerIO): void {
     log.info('socketIOConnection');
+    const postSocketHandler: SocketIOPostHandler = new SocketIOPostHandler(io);
+    postSocketHandler.listen();
+
   }
 }
