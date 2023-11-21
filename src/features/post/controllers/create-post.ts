@@ -4,7 +4,9 @@ import { postSchema } from '@post/shemes/post.schema';
 import { Request, Response, NextFunction} from 'express';
 import HTTP_STATUS from 'http-status-codes';
 import { IPostDocument } from '@post/interfaces/post.interface';
+import { PostCache } from '@service/redis/post.cache';
 
+const postCache: PostCache = new PostCache();
 
 export class Create {
   @joiValidation(postSchema)
@@ -51,6 +53,13 @@ export class Create {
         sad: 0
        }
     } as IPostDocument;
+
+    await postCache.savePostToCache({
+      key: postObjectId,
+      currentUserId:  `${req.currentUser!.userId}`,
+      uId: `${req.currentUser!.uId}`,
+      createdPost
+    });
 
     res.status(HTTP_STATUS.CREATED).json({message: 'Post created successfully'});
 
