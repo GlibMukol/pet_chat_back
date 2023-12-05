@@ -72,4 +72,19 @@ withCredentials: true
    "profilePicture": "https://res.cloudinary.com/dsgualnj4/image/upload/v1698757644/6540fc0b6c92c1b483f1edc6.jpg",
    "gifUrl": ""
 }
+###
+POST {{baseUrl}}/{{urlPath}}/post/image/post
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+   "post": "This is my first post",
+   "bgColor": "#ffffff",
+   "privacy":"public",
+   "feelings": "happy",
+   "profilePicture": "https://res.cloudinary.com/dsgualnj4/image/upload/v1698757644/6540fc0b6c92c1b483f1edc6.jpg",
+   "gifUrl": "",
+   "image": "https://picsum.photos/id/1/200/300"
+}
 

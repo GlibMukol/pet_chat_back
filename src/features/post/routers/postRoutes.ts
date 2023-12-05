@@ -15,6 +15,11 @@ class PostRouters {
 
   public read(): Router {
     this.router.post('/post', authMiddleware.checkAuth, Create.prototype.post);
+    this.router.post(
+      '/post/image/post',
+      authMiddleware.checkAuth,
+      Create.prototype.postWithImage,
+    );
     return this.router;
   }
 }
