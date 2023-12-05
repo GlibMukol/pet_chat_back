@@ -7,7 +7,7 @@ interface IReactions {
   haha: number;
   wow: number;
   sad: number;
-  angry: number
+  angry: number;
 }
 
 export interface IPostDocument extends Document {

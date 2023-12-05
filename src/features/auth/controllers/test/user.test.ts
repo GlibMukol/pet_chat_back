@@ -28,36 +28,46 @@ describe('CurrentUser', () => {
   });
 
   it('should get user from db if not exist in cache', async () => {
-    const req: Request = authMockRequest({
-      jwt: 'valid_token'
-    }, {
-      username: USERNAME,
-      password: PASSWORD
-    }) as Request;
+    const req: Request = authMockRequest(
+      {
+        jwt: 'valid_token',
+      },
+      {
+        username: USERNAME,
+        password: PASSWORD,
+      },
+    ) as Request;
     const res: Response = authMockResponse();
 
-    jest.spyOn(UserCache.prototype, 'getUserFromCache').mockReturnValue(null as any);
-    jest.spyOn(userService, 'getUserById').mockImplementation(() => Promise.resolve(existingUser));
+    jest
+      .spyOn(UserCache.prototype, 'getUserFromCache')
+      .mockReturnValue(null as any);
+    jest
+      .spyOn(userService, 'getUserById')
+      .mockImplementation(() => Promise.resolve(existingUser));
     await CurrentUser.prototype.read(req, res);
     expect(res.json).toHaveBeenCalledWith({
       isUser: true,
       token: 'valid_token',
-      user: existingUser
+      user: existingUser,
     });
   });
 
   it('should return user if exist in cache', async () => {
-    const req: Request = authMockRequest({
-      jwt: 'valid_token'
-    }, {
-      username: USERNAME,
-      password: PASSWORD
-    }) as Request;
+    const req: Request = authMockRequest(
+      {
+        jwt: 'valid_token',
+      },
+      {
+        username: USERNAME,
+        password: PASSWORD,
+      },
+    ) as Request;
     const res: Response = authMockResponse();
 
-    jest.spyOn(UserCache.prototype, 'getUserFromCache').mockResolvedValue(existingUser);
+    jest
+      .spyOn(UserCache.prototype, 'getUserFromCache')
+      .mockResolvedValue(existingUser);
     await CurrentUser.prototype.read(req, res);
-
   });
-
 });

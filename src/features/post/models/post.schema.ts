@@ -21,11 +21,15 @@ const postSchema: Schema = new Schema({
     happy: { type: Number, default: 0 },
     wow: { type: Number, default: 0 },
     sad: { type: Number, default: 0 },
-    angry: { type: Number, default: 0 }
+    angry: { type: Number, default: 0 },
   },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
-const PostModel: Model<IPostDocument> = model<IPostDocument>('Post', postSchema, 'Post');
+const PostModel: Model<IPostDocument> = model<IPostDocument>(
+  'Post',
+  postSchema,
+  'Post',
+);
 
 export { PostModel };

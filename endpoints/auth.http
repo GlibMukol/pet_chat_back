@@ -67,7 +67,7 @@ withCredentials: true
 {
    "post": "This is my first post",
    "bgColor": "#ffffff",
-   "privacy":"publick",
+   "privacy":"public",
    "feelings": "happy",
    "profilePicture": "https://res.cloudinary.com/dsgualnj4/image/upload/v1698757644/6540fc0b6c92c1b483f1edc6.jpg",
    "gifUrl": ""

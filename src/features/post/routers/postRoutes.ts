@@ -14,14 +14,9 @@ class PostRouters {
   }
 
   public read(): Router {
-    this.router.post(
-      '/post',
-      authMiddleware.checkAuth,
-      Create.prototype.post,
-    );
+    this.router.post('/post', authMiddleware.checkAuth, Create.prototype.post);
     return this.router;
   }
 }
 
-export const postRoutes: PostRouters =
-  new PostRouters();
+export const postRoutes: PostRouters = new PostRouters();

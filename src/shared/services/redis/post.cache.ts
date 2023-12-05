@@ -11,13 +11,8 @@ export class PostCache extends BaseCache {
     super('postCache');
   }
 
-  public async savePostToCache(data: ISavePostToCache):Promise<void> {
-    const {
-      createdPost,
-      currentUserId,
-      key,
-      uId
-    } = data;
+  public async savePostToCache(data: ISavePostToCache): Promise<void> {
+    const { createdPost, currentUserId, key, uId } = data;
 
     const {
       _id,
@@ -35,8 +30,8 @@ export class PostCache extends BaseCache {
       imgVersion,
       imgId,
       reactions,
-      createdAt
-    }  = createdPost;
+      createdAt,
+    } = createdPost;
 
     const firstList: string[] = [
       '_id',
@@ -71,9 +66,9 @@ export class PostCache extends BaseCache {
       'imgId',
       `${imgId}`,
       'reactions',
-       JSON.stringify(reactions),
+      JSON.stringify(reactions),
       'createdAt',
-      `${createdAt}`
+      `${createdAt}`,
     ];
 
     const dataToSave: string[] = [...firstList, ...secondList];
@@ -83,13 +78,16 @@ export class PostCache extends BaseCache {
         await this.client.connect();
       }
 
-      const postCount: string[] = await this.client.HMGET(`users:${currentUserId}`, 'postsCount');
+      const postCount: string[] = await this.client.HMGET(
+        `users:${currentUserId}`,
+        'postsCount',
+      );
 
       const multi = this.client.multi();
 
       multi.ZADD('post', {
         score: parseInt(uId, 10),
-        value: `${key}`
+        value: `${key}`,
       });
 
       multi.HSET(`posts:${key}`, dataToSave);
@@ -98,10 +96,9 @@ export class PostCache extends BaseCache {
       multi.HSET(`users:${currentUserId}`, ['postCount', count]);
 
       multi.exec();
-
     } catch (error) {
       log.error(error);
       throw new ServerError('Server error, try again');
     }
-   }
+  }
 }

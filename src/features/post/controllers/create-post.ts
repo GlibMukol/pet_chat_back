@@ -1,10 +1,12 @@
 import { ObjectId } from 'mongodb';
 import { joiValidation } from '@global/decorators/joi-validation.decorator';
 import { postSchema } from '@post/shemes/post.schema';
-import { Request, Response, NextFunction} from 'express';
+import { Request, Response, NextFunction } from 'express';
 import HTTP_STATUS from 'http-status-codes';
 import { IPostDocument } from '@post/interfaces/post.interface';
 import { PostCache } from '@service/redis/post.cache';
+import { socketIOPostObject } from '@socket/post.socket';
+import { postQueue } from '@service/queues/post.queue';
 
 const postCache: PostCache = new PostCache();
 
@@ -29,39 +31,47 @@ export class Create {
 
     const postObjectId = new ObjectId();
     const createdPost: IPostDocument = {
-       _id: postObjectId,
-       userId: req.currentUser!.userId,
-       username: req.currentUser!.username,
-       email: req.currentUser!.email,
-       avatarColor: req.currentUser!.avatarColor,
-       profilePicture,
-       post,
-       bgColor,
-       feelings,
-       privacy,
-       gifUrl,
-       commentsCount: 0,
-       imgVersion: '',
-       imgId: '',
-       createdAt: new Date(),
-       reactions: {
+      _id: postObjectId,
+      userId: req.currentUser!.userId,
+      username: req.currentUser!.username,
+      email: req.currentUser!.email,
+      avatarColor: req.currentUser!.avatarColor,
+      profilePicture,
+      post,
+      bgColor,
+      feelings,
+      privacy,
+      gifUrl,
+      commentsCount: 0,
+      imgVersion: '',
+      imgId: '',
+      createdAt: new Date(),
+      reactions: {
         like: 0,
         love: 0,
         haha: 0,
         wow: 0,
         angry: 0,
-        sad: 0
-       }
+        sad: 0,
+      },
     } as IPostDocument;
+
+    socketIOPostObject.emit('add post', createdPost);
 
     await postCache.savePostToCache({
       key: postObjectId,
-      currentUserId:  `${req.currentUser!.userId}`,
+      currentUserId: `${req.currentUser!.userId}`,
       uId: `${req.currentUser!.uId}`,
-      createdPost
+      createdPost,
     });
 
-    res.status(HTTP_STATUS.CREATED).json({message: 'Post created successfully'});
+    postQueue.addPostJob('addPostToDb', {
+      key: req.currentUser!.userId,
+      value: createdPost,
+    });
 
+    res
+      .status(HTTP_STATUS.CREATED)
+      .json({ message: 'Post created successfully' });
   }
 }

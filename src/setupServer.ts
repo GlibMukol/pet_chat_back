@@ -132,6 +132,5 @@ export class ChatServer {
     log.info('socketIOConnection');
     const postSocketHandler: SocketIOPostHandler = new SocketIOPostHandler(io);
     postSocketHandler.listen();
-
   }
 }
