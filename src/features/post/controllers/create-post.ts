@@ -75,17 +75,8 @@ export class Create {
     res: Response,
     next: NextFunction,
   ): Promise<void> {
-    const {
-      post,
-      bgColor,
-      privacy,
-      feelings,
-      gifUrl,
-      profilePicture,
-      imgVersion,
-      imgId,
-      image,
-    } = req.body;
+    const { post, bgColor, privacy, feelings, gifUrl, profilePicture, image } =
+      req.body;
 
     const result: UploadApiResponse = (await uploads(
       image,
